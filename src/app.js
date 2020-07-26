@@ -1,80 +1,82 @@
-console.log("App.js is running");
+class ChooseForMe extends React.Component {
+    render() {
+        const title = "Choose For Me";
+        const subtitle = "Let me decide for you";
+        const options = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
 
-
-const app = {
-    title: 'Hoteles',
-    subtitle: 'Reserva',
-    options: []
-}
-
-
-const user ={
-    name: 'Shina',
-    age: 25,
-    location: 'Buenos Aires'
-}
-
-const onFormSubmit = (e) => {
-    e.preventDefault();
-
-    const option = e.target.elements.option.value;
-    
-    if (option) {
-        app.options.push(option);
-        e.target.elements.option.value = '';
-        render();
+        return (
+            <div>
+                <Header title={title} subtitle={subtitle} />
+                <Action />
+                <Options options={options} />
+                <Option />
+                <AddOption />
+            </div>
+        )
     }
 }
-const onRemoveAll = () => {
-    app.options = [];
-    render();
+
+
+class Header extends React.Component {
+    render() {
+        return (
+            <div>
+                <h1>{this.props.title}</h1>
+                <h2>{this.props.subtitle}</h2>
+            </div>
+        )
+
+    }
+};
+
+class Action extends React.Component {
+    render() {
+        return (
+            <div>
+                <button>What should I do?</button>
+            </div>
+        )
+    }
+};
+
+class Options extends React.Component {
+    render() {
+        return (
+            <div>
+                <p>Here are your options</p>
+                {this.props.options.map((option) => <Option key={option} optionText={option} />)
+                }
+            </div>
+        )
+    }
+};
+
+class Option extends React.Component {
+    render() {
+        return (
+            <div>
+                <ol>
+                    {this.props.optionText}
+                </ol>
+            </div>
+        )
+    }
 }
 
-const onMakeDecision = () =>{
-    
+class AddOption extends React.Component {
+    render() {
+        return (
+            <div>
+                <form action="">
+                    Agregar opcion:
+                <input type="text" />
+                    <button>Enviar</button>
+                </form>
+            </div>
+        )
+    }
 }
 
-// DESDE ACÁ VA LO QUE SE RENDERIZA
-
-// var appRoot = document.getElementById("app");
-
-// ReactDOM.render(template, appRoot);
-
-var appRoot = document.getElementById("app");
-
-const numbers = [55, 101, 1000];
 
 
-const render = () =>{
-    const template = (
-    <div>
-        <h1>{app.title}</h1>
-
-        {app.subtitle && <p>{app.subtitle} </p>}
-        
-        { app.options.lenght > 0 ? 'Here are your options' : 'No options'}
-        <p>{app.options.length}</p>
-
-        <button onClick={onMakeDecision}>What should I do?</button>
-        <button onClick={onRemoveAll}>Remove All</button>
-        
-        <ol>
-
-        {
-            app.options.map((option)=> <li key={option}>{option}</li>)
-        }
-
-        </ol>
-        <form onSubmit={onFormSubmit}>
-            <input type="text" name="option"/>
-            <button>Add Option</button>
-        </form>
-        
-    </div>
-);
-ReactDOM.render(template, appRoot);
-
-
-}
-
-render();
+ReactDOM.render(<ChooseForMe />, document.getElementById('app')); 
