@@ -1,82 +1,169 @@
-class ChooseForMe extends React.Component {
+class MakeMeChoose extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleDeleteOptions = this.handleDeleteOptions.bind(this);
+        this.handlePick = this.handlePick.bind(this);
+        this.handleAddOption = this.handleAddOption.bind(this);
+        this.state = {
+            options: props.options
+        };
+    }
+
+
+    handleDeleteOptions() {
+        this.setState(() => {
+            return {
+                options: []
+            }
+        })
+    }
+
+    handlePick() {
+        const randomNum = Math.floor(Math.random() * this.state.options.length);
+        const option = this.state.options[randomNum];
+        alert(option)
+    }
+
+    handleAddOption(option) {
+        if (!option) {
+            return 'Please enter and option';
+        } else if (this.state.options.indexOf(option) > -1) {
+            return 'You have already entered that option!';
+        }
+
+        this.setState((prevState) => {
+            return {
+                options: prevState.options.concat([option])
+            }
+        });
+    }
+
+    //--------------------------------------------------
+
+    //End of methods, rendering app: 
+
     render() {
-        const title = "Choose For Me";
+        const title = "Make me choose";
         const subtitle = "Let me decide for you";
-        const options = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
 
         return (
             <div>
                 <Header title={title} subtitle={subtitle} />
-                <Action />
-                <Options options={options} />
+                <Action
+                    hasOptions={this.state.options.length > 0}
+                    handlePick={this.handlePick}
+                />
+                <Options
+                    options={this.state.options}
+                    handleDeleteOptions={this.handleDeleteOptions}
+                />
                 <Option />
-                <AddOption />
+                <AddOption
+                    handleAddOption={this.handleAddOption}
+                />
             </div>
         )
     }
 }
 
+MakeMeChoose.defaultProps = {
+    options: []
+}
 
-class Header extends React.Component {
-    render() {
-        return (
-            <div>
-                <h1>{this.props.title}</h1>
-                <h2>{this.props.subtitle}</h2>
-            </div>
-        )
 
-    }
+
+const Header = (props) => {
+    return (
+        <div>
+            <h1>{props.title}</h1>
+            {props.subtitle && <h2>{props.subtitle}</h2>}
+        </div>
+    )
 };
 
-class Action extends React.Component {
-    render() {
-        return (
-            <div>
-                <button>What should I do?</button>
-            </div>
-        )
-    }
+Header.defaultProps = {
+    title: 'Make me choose'
+}
+
+const Action = (props) => {
+    return (
+        <div>
+            <button
+                onClick={props.handlePick}
+                disabled={!props.hasOptions}
+            >
+                What should I do?
+                </button>
+        </div>
+    )
 };
 
-class Options extends React.Component {
-    render() {
-        return (
-            <div>
-                <p>Here are your options</p>
-                {this.props.options.map((option) => <Option key={option} optionText={option} />)
-                }
-            </div>
-        )
-    }
-};
 
-class Option extends React.Component {
-    render() {
-        return (
-            <div>
-                <ol>
-                    {this.props.optionText}
-                </ol>
-            </div>
-        )
-    }
+const Options = (props) => {
+    return (
+        <div>
+            <p>Here are your options</p>
+            {props.options.map((option) => <Option key={option} optionText={option} />)}
+
+            <button onClick={props.handleDeleteOptions}>Remove All</button>
+        </div>
+    )
+}
+
+const Option = (props) => {
+    return (
+        <div>
+            <ol>
+                {props.optionText}
+            </ol>
+        </div>
+    )
 }
 
 class AddOption extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleAddOption = this.handleAddOption.bind(this);
+        this.state = {
+            error: undefined
+        };
+    }
+    handleAddOption(e) {
+        e.preventDefault();
+
+        const option = e.target.elements.option.value.trim();
+        const error = this.props.handleAddOption(option);
+
+        this.setState(() => {
+            return { error };
+        });
+
+
+
+    }
     render() {
         return (
             <div>
-                <form action="">
-                    Agregar opcion:
-                <input type="text" />
-                    <button>Enviar</button>
+                {this.state.error && <p>{this.state.error}</p>}
+                <form onSubmit={this.handleAddOption}>
+                    <input type="text" name="option" />
+                    <button>Add Option</button>
                 </form>
             </div>
         )
     }
 }
 
+const User = (props) => {
+    return (
+        <div>
+            <p>Name: {props.name}</p>
+            <p>Age:{props.age}</p>
+        </div>
+
+    );
+};
 
 
-ReactDOM.render(<ChooseForMe />, document.getElementById('app')); 
+
+ReactDOM.render(<MakeMeChoose options={['Option 1', 'Option 2']} />, document.getElementById('app'));
